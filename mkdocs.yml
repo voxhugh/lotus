@@ -3,16 +3,29 @@ site_description: Personal Technical Knowledge Base
 site_url: https://voxhugh.github.io/lotus/
 repo_url: https://github.com/voxhugh/lotus
 
+# Navigation is generated automatically from docs/.
+# Each topic branch is mirrored into its own directory by scripts/sync_branches.py.
 theme:
   name: material
   language: zh
   features:
-    - navigation.top
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.path
     - search.suggest
     - search.highlight
     - content.code.copy
 
+plugins:
+  - search
+
 markdown_extensions:
+  - admonition
   - attr_list
   - md_in_html
+  - pymdownx.details
   - pymdownx.superfences
+  - toc:
+      permalink: true
