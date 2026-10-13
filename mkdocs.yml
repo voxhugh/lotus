@@ -4,16 +4,15 @@ site_url: https://voxhugh.github.io/lotus/
 repo_url: https://github.com/voxhugh/lotus
 
 theme:
-name: material
-language: zh
-features:
-- navigation.top
-- search.suggest
-- search.highlight
-- content.code.copy
+  name: material
+  language: zh
+  features:
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
 
 markdown_extensions:
-
-* attr_list
-* md_in_html
-* pymdownx.superfences
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences
