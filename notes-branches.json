@@ -1,0 +1,34 @@
+{
+  "topics": [
+    {
+      "branch": "cc",
+      "directory": "cpp",
+      "title": "C++",
+      "description": "语言基础、对象模型、内存布局与 STL。"
+    },
+    {
+      "branch": "asm",
+      "directory": "assembly",
+      "title": "Assembly",
+      "description": "汇编与底层相关知识。"
+    },
+    {
+      "branch": "lnx",
+      "directory": "linux",
+      "title": "Linux",
+      "description": "Linux 系统与开发相关知识。"
+    },
+    {
+      "branch": "py",
+      "directory": "python",
+      "title": "Python",
+      "description": "Python 语言相关笔记。"
+    },
+    {
+      "branch": "sql",
+      "directory": "sql",
+      "title": "SQL",
+      "description": "SQL 与数据库相关知识。"
+    }
+  ]
+}

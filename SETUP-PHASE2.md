@@ -1,40 +1,57 @@
-# Lotus Phase 2: unify all note branches into MkDocs
+# Lotus Phase 2 (flexible branch registry)
 
-This overlay keeps the current branch layout (`cc`, `asm`, `lnx`, `py`, `sql`) and mirrors each branch into the deployed site during every build. Markdown files, relative images, and other tracked attachments are copied. The root `README.md` from each topic branch becomes that topic's `index.md`.
+This version removes the topic branch lists from the workflows and scripts. `notes-branches.json` is the single registry for branch names, site paths, titles, descriptions, generated homepage cards, branch syncing, and notifier installation.
 
-## Install
+## Install / upgrade
 
-1. Use a local clone of `voxhugh/lotus`; make sure `main` is the checked-out branch and the working tree is clean. Back up anything uncommitted first.
-2. Copy/merge the contents of this package into the repository root, preserving paths. Review `README.md`, `mkdocs.yml`, `docs/index.md`, `scripts/`, and `.github/workflows/`.
-3. Commit and push the main-branch files (do not replace your existing `.gitignore`; this package intentionally does not provide one):
+1. Make sure you are on `main` with a clean working tree. Download and extract this package, then merge its contents into the repository root.
+2. Review these files: `README.md`, `mkdocs.yml`, `notes-branches.json`, `scripts/`, and `.github/workflows/`.
+3. If you are replacing the earlier phase-2 package, `mkdocs.yml` now uses `docs_dir: generated_docs`. Old `docs/index.md` is no longer used; it may be removed from `main` to avoid confusion. Add `site/` and `generated_docs/` to your existing `.gitignore` if desired; do not replace an existing `.gitignore` wholesale.
+4. Commit and push the main-branch files:
 
    ```bash
-   git add README.md mkdocs.yml docs scripts .github/workflows/deploy.yml .github/workflows/lotus-docs-notify.yml SETUP-PHASE2.md
-   git commit -m "Integrate notes branches into Lotus docs site"
+   git add README.md mkdocs.yml notes-branches.json scripts .github/workflows/deploy.yml .github/workflows/lotus-docs-notify.yml SETUP-PHASE2.md
+   git commit -m "Make Lotus docs branch registry extensible"
    git push origin main
    ```
 
-4. Install the branch notification workflow from a clean main working tree:
+5. Install/update the generic notifier on all branches listed in `notes-branches.json`. Start with a clean local main working tree:
 
    ```bash
    python scripts/install_branch_triggers.py
    ```
 
-   This script adds `.github/workflows/lotus-docs-notify.yml` to `cc`, `asm`, `lnx`, `py`, and `sql`, commits and pushes that workflow to each branch, and then switches back to `main`. It refuses to proceed if the main working tree is dirty or if a local topic branch differs from its remote tip. Run it from a clean clone if you have locally diverged branches.
+   The script validates that local note branches match their remote tips before changing anything, commits only the notifier workflow, pushes each updated topic branch, and returns to `main`.
 
-5. In GitHub, confirm **Settings → Pages → Build and deployment → Source** is set to **GitHub Actions**. In **Settings → Actions → General**, make sure workflows have permission to run and that the default `GITHUB_TOKEN` can have the requested per-workflow permissions. The notifier specifically needs `contents: write` to emit `repository_dispatch`; the deployment workflow declares only `contents: read`, `pages: write`, and `id-token: write`.
+6. Ensure **Settings → Pages → Build and deployment → Source** is set to **GitHub Actions** and the Actions permissions allow `contents: write` for the notifier workflow.
 
-6. Open **Actions → Deploy Lotus Docs** and inspect the build. The site should be published at `https://voxhugh.github.io/lotus/` after the run succeeds.
+## Updating existing notes
 
-## Update behavior
+Edit, commit, and push a registered topic branch normally. Its notifier checks whether the branch appears in `notes-branches.json`; if it does, it emits a `notes-updated` repository-dispatch event. The `main` deploy workflow fetches the registered branch tips, generates `generated_docs/`, runs `mkdocs build`, and deploys Pages. A daily build is included as a fallback.
 
-- A push to `main` builds and deploys the website.
-- A push to any note branch runs that branch's notifier, which sends a `notes-updated` repository-dispatch event. The build/deploy runs from the default branch (`main`) and fetches the latest tips of all note branches.
-- A daily scheduled build is included as a fallback; you can also run **Deploy Lotus Docs → Run workflow** manually.
+## Adding a new topic branch
 
-## Important notes
+1. Create and push the new notes branch first. For a clean new topic, use an orphan branch or create it from an existing topic branch and replace its note contents. Avoid basing a notes branch on `main`, because `main` contains portal scripts/config that are not notes.
+2. On `main`, add one object to `notes-branches.json`, for example:
 
-- The script does not push or rewrite the note contents. It only generates `docs/{cpp,assembly,linux,python,sql}/` during the Actions run; these generated mirrors are not committed to `main`.
-- The sync excludes GitHub workflow metadata and root Git metadata files from the published documentation. Symlinks in topic branches are skipped for safety.
-- `mkdocs build` is intentionally not run with `--strict` for the first rollout, so any pre-existing broken local links show as warnings instead of immediately blocking deployment. Review the Actions log and fix broken links later.
-- Internal relative links and image paths are preserved in their branch-relative layout. Root README links are rewritten when that README becomes `index.md`. Links that hard-code external `github.com/.../blob/<branch>/...` URLs will continue to open GitHub rather than the site.
+   ```json
+   {
+     "branch": "rust",
+     "directory": "rust",
+     "title": "Rust",
+     "description": "Rust 语言与生态笔记。"
+   }
+   ```
+
+   Put the new object into the existing `topics` array, including a comma after the preceding object. Keep `branch` unique and `directory` a unique single folder name. Push the updated manifest to `main`.
+3. Run `python scripts/install_branch_triggers.py` from a clean `main` checkout. The script reads the manifest and installs/updates the notifier on all registered branches, including the new one. If the new branch did not inherit the notifier, this step adds it. The push that installs the notifier will then trigger a rebuild because the branch is now registered.
+
+No edits are needed in `deploy.yml`, `sync_branches.py`, or the homepage for a new topic. The homepage, topic destination folder, and sync list are generated from `notes-branches.json`.
+
+## Notes / limitations
+
+- Only branches explicitly listed in `notes-branches.json` appear on the site. This avoids accidentally publishing temporary work branches.
+- The sync script mirrors tracked branch files while excluding `.github`, Git metadata files, `site/`, and `generated_docs/`. Symlinks are skipped for safety.
+- Each topic branch's root `README.md` becomes that topic's `index.md` when there is no existing `index.md`.
+- Relative Markdown links and image paths retain their branch-relative layout. Hard-coded `github.com/.../blob/<branch>/...` links continue to open GitHub.
+- The scripts do not commit the generated documentation; `generated_docs/` is produced on each build.

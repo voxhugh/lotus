@@ -1,13 +1,11 @@
 name: Notify Lotus Docs Build
 
 on:
+  # Any non-main branch can notify the portal. The sync manifest decides which
+  # branches are actually published; this avoids branch-name lists here.
   push:
-    branches:
-      - cc
-      - asm
-      - lnx
-      - py
-      - sql
+    branches-ignore:
+      - main
 
 permissions:
   contents: write
@@ -16,7 +14,32 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out the portal registry
+        uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - name: Check whether this is a registered notes branch
+        id: topic
+        env:
+          PUSHED_BRANCH: ${{ github.ref_name }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          pushed = os.environ["PUSHED_BRANCH"]
+          data = json.loads(Path("notes-branches.json").read_text(encoding="utf-8"))
+          branches = {item["branch"] for item in data["topics"]}
+          is_topic = pushed in branches
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"is_topic={'true' if is_topic else 'false'}\n")
+          print(f"{pushed}: {'registered topic' if is_topic else 'not registered; skipping dispatch'}")
+          PY
+
       - name: Ask main branch to rebuild the documentation site
+        if: steps.topic.outputs.is_topic == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: >-
