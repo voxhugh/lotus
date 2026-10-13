@@ -1,25 +1,40 @@
 site_name: Lotus
-site_description: Personal Technical Knowledge Base
+site_description: A personal knowledge archive
 site_url: https://voxhugh.github.io/lotus/
 repo_url: https://github.com/voxhugh/lotus
 docs_dir: generated_docs
 
-# Topic navigation is generated from notes-branches.json and each topic index.md.
+# Keep the interface quiet; let the notes take visual priority.
 theme:
   name: material
   language: zh
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: blue grey
+      toggle:
+        icon: material/weather-sunny
+        name: 切换到深色模式
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: blue grey
+      toggle:
+        icon: material/weather-night
+        name: 切换到浅色模式
   features:
-    - navigation.tabs
+    - navigation.instant
+    - navigation.tracking
     - navigation.sections
-    - navigation.expand
     - navigation.indexes
     - navigation.path
+    - content.code.copy
     - search.suggest
     - search.highlight
-    - content.code.copy
 
-plugins:
-  - search
+extra_css:
+  - stylesheets/lotus.css
 
 markdown_extensions:
   - admonition

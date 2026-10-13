@@ -16,8 +16,9 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "generated_docs"
 MANIFEST = ROOT / "notes-branches.json"
+STYLE_SOURCE = ROOT / "site-assets" / "lotus.css"
 EXCLUDED_ROOT_FILES = {".gitignore", ".gitattributes", ".gitmodules", ".nojekyll"}
-EXCLUDED_DIRS = {".github", ".git", "site", "generated_docs"}
+EXCLUDED_DIRS = {".github", ".git", "site", "generated_docs", "__pycache__"}
 LINK_PATTERN = re.compile(r"(?P<prefix>\]\()(?P<url><[^>]+>|[^)\s]+)(?P<suffix>[^)]*\))")
 
 
@@ -49,9 +50,8 @@ def load_topics() -> list[dict[str, str]]:
         description = item.get("description", "")
         if not all(isinstance(v, str) and v.strip() for v in (branch, directory, title)):
             raise RuntimeError(f"Topic entry requires non-empty branch, directory and title: {item!r}")
-        if branch.startswith("-") or "\x00" in branch:
-            raise RuntimeError(f"Invalid branch name in registry: {branch!r}")
-        # Keep topic directories as single safe path components.
+        if branch == "main" or branch.startswith("-") or "\x00" in branch:
+            raise RuntimeError(f"Invalid topic branch name: {branch!r}; 'main' is reserved")
         p = PurePosixPath(directory)
         if p.is_absolute() or len(p.parts) != 1 or p.parts[0] in {".", ".."}:
             raise RuntimeError(f"directory must be a single safe folder name: {directory!r}")
@@ -71,7 +71,7 @@ def load_topics() -> list[dict[str, str]]:
 
 
 def rewrite_root_readme_links(root: Path, readme: Path, index: Path) -> None:
-    """Rewrite Markdown links resolving to the branch's root README as index.md."""
+    """Rewrite Markdown links that resolve to the branch's root README as index.md."""
     for md_file in root.rglob("*.md"):
         try:
             content = md_file.read_text(encoding="utf-8")
@@ -100,9 +100,13 @@ def rewrite_root_readme_links(root: Path, readme: Path, index: Path) -> None:
 
 def make_homepage(topics: list[dict[str, str]]) -> str:
     lines = [
-        "# Lotus", "", 
-        "> 个人技术笔记，记录知识、理解与实践。", "",
-        "Lotus 按技术主题组织笔记。各主题由独立 Git 分支维护，构建时自动汇集到同一个文档站。", "",
+        "# Lotus", "",
+        '<section class="lotus-intro" markdown>',
+        '<p class="lotus-kicker">PERSONAL KNOWLEDGE ARCHIVE</p>',
+        '<p class="lotus-lead">把好奇心留下来，把理解沉淀下来。</p>',
+        '<p class="lotus-description">Lotus 是一份持续生长的个人技术笔记。各主题独立维护，统一汇集、浏览与检索。</p>',
+        "</section>", "",
+        "## 按主题浏览", "",
         '<div class="grid cards" markdown>', "",
     ]
     for topic in topics:
@@ -110,12 +114,12 @@ def make_homepage(topics: list[dict[str, str]]) -> str:
         description = topic["description"] or f"浏览 {title} 相关笔记。"
         directory = topic["directory"]
         lines.extend([
-            f"-   **{title}**", "", "    ---", "", f"    {description}", "",
-            f"    [浏览 {title} 笔记]({directory}/index.md)", "",
+            f"-   <span class=\"lotus-card-title\">{title}</span>", "", "    ---", "",
+            f"    {description}", "", f"    [进入主题 →]({directory}/index.md)", "",
         ])
     lines.extend([
-        "</div>", "", "---", "",
-        "修改主题分支后，通知工作流会触发网站重新构建；每日定时构建提供兜底同步。", "",
+        "</div>", "",
+        '<p class="lotus-footer-note">内容从各主题分支自动构建。新增主题只需登记在 <code>notes-branches.json</code> 中。</p>', "",
     ])
     return "\n".join(lines)
 
@@ -193,13 +197,16 @@ def main() -> int:
     if not (ROOT / "mkdocs.yml").is_file():
         print("Run this script from the Lotus repository.", file=sys.stderr)
         return 2
+    if not STYLE_SOURCE.is_file():
+        raise RuntimeError(f"Missing site stylesheet: {STYLE_SOURCE}")
 
-    # Generated site sources live in a separate, disposable folder. A local build
-    # will not rewrite committed portal source files.
     if DOCS.exists():
         shutil.rmtree(DOCS)
     DOCS.mkdir(parents=True)
     (DOCS / "index.md").write_text(make_homepage(topics), encoding="utf-8")
+    styles_dir = DOCS / "stylesheets"
+    styles_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(STYLE_SOURCE, styles_dir / "lotus.css")
 
     for topic in topics:
         copy_branch(topic, DOCS / topic["directory"])
