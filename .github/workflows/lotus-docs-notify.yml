@@ -1,0 +1,25 @@
+name: Notify Lotus Docs Build
+
+on:
+  push:
+    branches:
+      - cc
+      - asm
+      - lnx
+      - py
+      - sql
+
+permissions:
+  contents: write
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask main branch to rebuild the documentation site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches"
+          -f event_type=notes-updated
+          -F "client_payload[branch]=${GITHUB_REF_NAME}"
