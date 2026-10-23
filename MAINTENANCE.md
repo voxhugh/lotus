@@ -74,7 +74,6 @@ git push origin cc
 | `.github/workflows/lotus-docs-notify.yml` | 放在主题分支中的轻量更新通知器 |
 | `generated_docs/` | 构建时自动生成的 MkDocs 输入，不手改、不提交 |
 | `site/` | MkDocs 输出目录，不手改、不提交 |
-| `github-profile/README.md` | 单独的 GitHub 个人主页 README 模板，不属于 `lotus` 构建输入 |
 
 ## 本地预览与验证
 
