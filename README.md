@@ -1,4 +1,4 @@
-# TCP/IP Illustrated, Volume 1
+# TCP/IP
 
 ## 概述
 
@@ -151,17 +151,17 @@
 三次握手：
 
 ```text
-C -> S: seq=M,     SYN
-S -> C: seq=N, ack=M+1, SYN+ACK
+C -> S: seq=M,            SYN
+S -> C: seq=N, ack=M+1,   SYN+ACK
 C -> S: seq=M+1, ack=N+1, ACK
 ```
 
 典型四次挥手：
 
 ```text
-C -> S: seq=X,   ack=Y,   FIN+ACK
-S -> C: seq=Y,   ack=X+1, ACK
-S -> C: seq=Y',  ack=X+1, FIN+ACK
+C -> S: seq=X,   ack=Y,    FIN+ACK
+S -> C: seq=Y,   ack=X+1,  ACK
+S -> C: seq=Y',  ack=X+1,  FIN+ACK
 C -> S: seq=X+1, ack=Y'+1, ACK
 ```
 
