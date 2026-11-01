@@ -32,9 +32,9 @@
     },
     {
       "branch": "tcp-ip",
-      "directory": "networking",
+      "directory": "tcp-ip",
       "title": "TCP/IP",
-      "description": "TCP/IP 协议体系与网络通信机制。"
+      "description": "TCP/IP 网络与协议。"
     }
   ]
 }
