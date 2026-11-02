@@ -82,8 +82,7 @@
 
 | 层次 | 协议 |
 | :-- | :-- |
-| 链路层 | 以太网、802.3、SLIP、PPP |
-|  | ARP、RARP |
+| 链路层 | 以太网、802.3、SLIP、PPP \| ARP、RARP |
 | 网络层 | IP、ICMP、IGMP |
 | 传输层 | TCP、UDP |
 | 应用层 | DNS、TFTP、BOOTP、SNMP、Telnet、Rlogin、FTP、SMTP、NFS 等 |
@@ -211,6 +210,8 @@
 ## 网络层
 
 ### IP
+
+![](images/ipv4.svg)
 
 #### 首部
 
@@ -430,6 +431,8 @@
 
 ### UDP
 
+![](images/udp.svg)
+
 #### 数据报
 
 - 进程单次输出生成一个完整 UDP 数据报，交由 IP 封装，不保证可靠性
@@ -444,6 +447,8 @@
 ---
 
 ### TCP
+
+![](images/tcp.svg)
 
 - 面向连接、可靠的字节流传输，点对点通信
 - 无应用层消息边界，全双工双向传输
