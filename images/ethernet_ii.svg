@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1180" viewBox="0 0 1800 1180">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>
+  .cn { font-family: "Noto Serif CJK SC", "Source Han Serif SC", serif; fill: #171717; }
+  .latin { font-family: "Liberation Serif", "Noto Serif", serif; fill: #171717; }
+  .title { font-size: 48px; letter-spacing: 2px; }
+  .subtitle { font-size: 25px; fill: #666666; letter-spacing: 1px; }
+  .field { font-size: 34px; }
+  .size { font-size: 29px; }
+  .section { font-size: 29px; }
+  .cellLabel { font-size: 30px; }
+  .cellSize { font-size: 23px; fill: #555555; }
+  .note { font-size: 24px; fill: #555555; }
+  .rule { stroke: #1b1b1b; stroke-width: 2.2; fill: none; }
+  .thin { stroke: #333333; stroke-width: 1.5; fill: none; }
+  .dash { stroke: #555555; stroke-width: 1.7; stroke-dasharray: 9 9; fill: none; }
+</style>
+<text x="900" y="104" text-anchor="middle" class="cn title">以太网帧格式</text>
+<text x="900" y="151" text-anchor="middle" class="latin subtitle">Ethernet II  ·  RFC 894</text>
+<line x1="105" y1="190" x2="1695" y2="190" class="thin"/>
+<line x1="745" y1="250" x2="1600" y2="250" class="rule"/>
+<path d="M 745 250 l 16 -8 l 0 16 z" fill="#1b1b1b"/>
+<path d="M 1600 250 l -16 -8 l 0 16 z" fill="#1b1b1b"/>
+<line x1="745" y1="258" x2="745" y2="312" class="dash"/>
+<line x1="1600" y1="258" x2="1600" y2="312" class="dash"/>
+<text x="1172.5" y="230" text-anchor="middle" class="cn size">46–1500 字节</text>
+<rect x="100" y="320" width="1650" height="104" class="rule"/>
+<line x1="350" y1="320" x2="350" y2="424" class="rule"/>
+<line x1="600" y1="320" x2="600" y2="424" class="rule"/>
+<line x1="745" y1="320" x2="745" y2="424" class="rule"/>
+<line x1="1600" y1="320" x2="1600" y2="424" class="rule"/>
+<text x="225.0" y="384" text-anchor="middle" class="cn field">目的 MAC 地址</text>
+<text x="225.0" y="472" text-anchor="middle" class="latin size">6 B</text>
+<text x="475.0" y="384" text-anchor="middle" class="cn field">源 MAC 地址</text>
+<text x="475.0" y="472" text-anchor="middle" class="latin size">6 B</text>
+<text x="672.5" y="384" text-anchor="middle" class="cn field">类型</text>
+<text x="672.5" y="472" text-anchor="middle" class="latin size">2 B</text>
+<text x="1172.5" y="384" text-anchor="middle" class="cn field">数据</text>
+<text x="1172.5" y="472" text-anchor="middle" class="latin size">46–1500 B</text>
+<text x="1675.0" y="384" text-anchor="middle" class="cn field">CRC</text>
+<text x="1675.0" y="472" text-anchor="middle" class="latin size">4 B</text>
+<text x="100" y="600" class="cn section">常见类型字段值及对应数据</text>
+<line x1="630" y1="590" x2="1695" y2="590" class="thin"/>
+<rect x="190" y="680" width="260" height="86" class="rule"/>
+<text x="320.0" y="717" text-anchor="middle" class="latin cellLabel">0x0800</text>
+<text x="320.0" y="748" text-anchor="middle" class="latin cellSize">2 B</text>
+<rect x="450" y="680" width="1160" height="86" class="rule"/>
+<text x="1030.0" y="717" text-anchor="middle" class="cn cellLabel">IP 数据报</text>
+<text x="1030.0" y="748" text-anchor="middle" class="latin cellSize">46–1500 B</text>
+<rect x="190" y="814" width="260" height="86" class="rule"/>
+<text x="320.0" y="851" text-anchor="middle" class="latin cellLabel">0x0806</text>
+<text x="320.0" y="882" text-anchor="middle" class="latin cellSize">2 B</text>
+<rect x="450" y="814" width="900" height="86" class="rule"/>
+<text x="900.0" y="851" text-anchor="middle" class="cn cellLabel">ARP 请求 / 应答</text>
+<text x="900.0" y="882" text-anchor="middle" class="latin cellSize">28 B</text>
+<rect x="1350" y="814" width="260" height="86" class="rule"/>
+<text x="1480.0" y="851" text-anchor="middle" class="latin cellLabel">PAD</text>
+<text x="1480.0" y="882" text-anchor="middle" class="latin cellSize">18 B</text>
+<rect x="190" y="948" width="260" height="86" class="rule"/>
+<text x="320.0" y="985" text-anchor="middle" class="latin cellLabel">0x8035</text>
+<text x="320.0" y="1016" text-anchor="middle" class="latin cellSize">2 B</text>
+<rect x="450" y="948" width="900" height="86" class="rule"/>
+<text x="900.0" y="985" text-anchor="middle" class="cn cellLabel">RARP 请求 / 应答</text>
+<text x="900.0" y="1016" text-anchor="middle" class="latin cellSize">28 B</text>
+<rect x="1350" y="948" width="260" height="86" class="rule"/>
+<text x="1480.0" y="985" text-anchor="middle" class="latin cellLabel">PAD</text>
+<text x="1480.0" y="1016" text-anchor="middle" class="latin cellSize">18 B</text>
+<line x1="105" y1="1080" x2="1695" y2="1080" class="thin"/>
+<text x="900" y="1126" text-anchor="middle" class="cn note">ARP / RARP 报文为 28 字节，需填充 18 字节，使数据字段达到最小长度 46 字节。</text>
+</svg>
